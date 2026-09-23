@@ -1,19 +1,7 @@
 # The Unofficial Guide
 
-<!-- Replace this line with your name and which corpus you picked. -->
-
-> **This file is your submission.** Fill it in as you go — most sections get
-> written during the milestone that produces them, not at the end.
->
-> How the starter works, and every command you'll need, is in `RUNNING.md`.
-> Leave that file alone.
->
-> **Paste everything as text.** No screenshots, no video. A typed table gets
-> full credit; a picture of the same table gets none.
->
-> Delete these instruction blocks as you replace them. The `<!-- -->` comments
-> are notes to you and don't show up when the page renders — you can leave them
-> or remove them.
+Name: Fatima Chaudhry
+Corpus: campus_life
 
 ---
 
@@ -21,26 +9,27 @@
 
 ## What This Does
 
-<!-- Three or four sentences. Which corpus you picked, and the kinds of
-     questions your system answers. Write it for someone who has never seen
-     this repo.
-
-     Milestone 5. -->
+The Unofficial Guide answers questions about campus life using the campus_life corpus, a set of short student 
+posts about courses, housing, dining, and admin rules. You ask a plain question, like "Is ECON 101 curved?" or 
+"How long is the wait at Verrill Street Grill?", and it finds the most relevant posts and answers from them. 
+Every answer names the file it came from. If a question is outside what the posts cover, the system says it 
+doesn't have enough information instead of guessing.
 
 ## Chunking Strategy
 
 **Chunk size:**
+
+ One paragraph per chunk. Paragraphs under 40 characters get merged into the next one.
+
 **Overlap:**
 
-<!-- What about YOUR documents made you pick these numbers? Short posts and
-     long sectioned guides don't want the same chunking, and "800 seemed
-     reasonable" earns nothing. Point at something you noticed when you read
-     the documents in Milestone 1.
+No overlap.
 
-     If you changed your mind partway through, say so and say why. That's worth
-     more than pretending you got it right first time.
-
-     Milestone 3. -->
+When I read the campus_life posts, they were short, and many had a title line followed by one or two paragraphs. 
+The starter's 800-character chunker never split anything, so every post was one chunk, even posts that covered two 
+separate points. Splitting on paragraphs keeps each thought in its own chunk. The 40-character rule exists because 
+titles like "On the add/drop deadline" are too short to mean anything alone, so I attach them to the paragraph they 
+introduce. I used no overlap because I split at paragraph breaks, so a sentence is never cut in half.
 
 ## Sample Chunks
 
@@ -75,50 +64,61 @@ The good: cheapest housing tier by about $900 a year, and the singles are real s
 
 ## Sample Answer
 
-<!-- One complete question and answer, pasted as text, with the source line
-     visible. Milestone 4. -->
-
 **Question:**
+
+Is ECON 101 curved?
 
 **Answer:**
 
 ```
+Yes, ECON 101 is curved, and generously. 
+
+Source: `course_econ_101.txt` (and `course_econ_101_exams.txt`)
+
+Sources retrieved: course_econ_101.txt, course_econ_101_exams.txt, course_econ_101_workload.txt, course_phys_130_exams.txt
 ```
 
 **My relevance cutoff:**
 
-<!-- The number you set in config.py, and how you got there.
+Relevance cutoff: 0.6
 
-     You ran five questions your corpus covers and the five in OUT_OF_SCOPE
-     that it clearly doesn't, and wrote down the best distance for each. What
-     did those two groups look like? Where was the gap? Put the actual numbers
-     here — the table below wants all ten rows.
-
-     Milestone 4. -->
+I kept the starter's default because it already sits in the gap in my results. My five in-corpus questions 
+had best distances from 0.147 to 0.522. My five out-of-scope questions ranged from 0.821 to 0.885. The relevance 
+cutoff of 0.6 lets every real question through and stops every off-topic one. The closest call is ECON 101 at 
+0.522, which is only 0.078 under the cutoff.
 
 | Question | In corpus? | Best distance |
 |---|---|---|
-|  |  |  |
+| Verrill Street Grill wait | Yes | 0.147 |
+| Campus shuttle frequency | Yes | 0.182 |
+| Laundry at Calder Annexe | Yes | 0.218 |
+| Printing quota rollover | Yes | 0.389 |
+| ECON 101 curved | Yes | 0.522 |
+| Capital of Mongolia | No | 0.821 |
+| Diesel oil change | No | 0.885 |
+| 1994 World Cup | No | 0.874 |
+| Ibuprofen dosage | No | 0.824 |
+| Rust for loop | No | 0.857 |
 
 ## How I Used AI
 
-<!-- Two specific moments. For each: what you asked for, what came back, and
-     what you changed about it.
-
-     "I asked Claude to write the chunking function from my notes. It ignored
-     the overlap, so I added that myself" is the level of detail we're after.
-     "I used AI to help me code" is not.
-
-     Milestone 5. -->
-
 **1.**
+
+I asked Claude to check whether my criterion 4 could be tested from the sentence alone. I originally had 
+"At least 4 of 5 sampled chunks contain a full sentence with no idea cut off mid-thought at either end."
+It said "cut off mid-thought" is a judgment call, and two people could score the same chunk differently.  
+It said to check if the chunk starts with a capital letter and ends with punctuation. I revised my 
+criterion to drop the capital letter rule and just check that each chunk starts after a period or at the 
+start of a document, and ends with punctuation.
 
 **2.**
 
-<!-- ── Stretch features ─────────────────────────────────────────────────────
-     Doing one? Say so here BEFORE you start. A feature this README never
-     claims earns nothing.
-     ───────────────────────────────────────────────────────────────────────── -->
+I pasted the best distances for five questions my documents cover and five they don't, and asked Claude 
+where it would put the cutoff and what I would get wrong at that number. My in-corpus questions ranged 
+from 0.147 to 0.522, and my out-of-scope questions ranged from 0.821 to 0.885. It said the default cutoff 
+of 0.6 sits in the gap between the two groups. It also warned that my ECON 101 question was close at 0.522,
+ so a vaguer version of a real question could land above 0.6 and get refused. I kept 0.6 because it separates
+  all ten of my questions, with every in-corpus question below it and every out-of-scope question above it.
 
 ---
 

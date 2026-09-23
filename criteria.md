@@ -48,11 +48,6 @@ When I ask a question my documents clearly don't cover, the relevance gate
 stops it and the system returns "I don't have enough information about that" —
 in at least 4 of 5 tries.
 
-<!-- The five questions are the ones in `OUT_OF_SCOPE` at the bottom of
-     `questions.py`, and `run_eval.py` puts them through the gate and writes
-     what happened into your run log. Swap them for your own if you'd rather —
-     just keep five of them, or the "4 of 5" above has nothing to be 4 of. -->
-
 **Why this target:**
 
 I expect the system to correctly refuse most of these questions, since they are about 
@@ -60,21 +55,20 @@ completely different topics than campus documents, and should not come back look
 
 ---
 
-## 4. Something about your chunks
+## 4. Chunks start and end at sentence boundaries
 
 For at least 4 of 5 sampled chunks, each one starts right after a period or is the very 
 beginning of a document, and ends with a period, question mark, or exclamation point.
 
 **Why this target:**
 
-My documents average 317 characters, and the fallback chunker almost never reaches its 
-800 character cutoff, so most chunks are already whole documents. I expect this to hold 
-most of the time, but I am not setting it at 5 of 5 in case my chunker introduces an edge 
-case with a document that covers two separate topics.
+My documents are short student posts, and my chunker splits them at paragraph breaks, so chunks should 
+start and end on full sentences. I am not setting it at 5 of 5 because some chunks start with a title 
+line, like "Re: Verrill Street Grill," which may not end in punctuation and could break the rule.
 
 ---
 
-## 5. Your choice
+## 5. The named source is the right document
 
 For at least 4 of my 5 test questions, the source named in the answer is the actual 
 document that contains the answer, not just any document that got retrieved.
