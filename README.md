@@ -82,11 +82,6 @@ Sources retrieved: course_econ_101.txt, course_econ_101_exams.txt, course_econ_1
 
 Relevance cutoff: 0.6
 
-I kept the starter's default because it already sits in the gap in my results. My five in-corpus questions 
-had best distances from 0.147 to 0.522. My five out-of-scope questions ranged from 0.821 to 0.885. The relevance 
-cutoff of 0.6 lets every real question through and stops every off-topic one. The closest call is ECON 101 at 
-0.522, which is only 0.078 under the cutoff.
-
 | Question | In corpus? | Best distance |
 |---|---|---|
 | Verrill Street Grill wait | Yes | 0.147 |
@@ -99,6 +94,11 @@ cutoff of 0.6 lets every real question through and stops every off-topic one. Th
 | 1994 World Cup | No | 0.874 |
 | Ibuprofen dosage | No | 0.824 |
 | Rust for loop | No | 0.857 |
+
+I kept the starter's default because it already sits in the gap in my results. My five in-corpus questions 
+had best distances from 0.147 to 0.522. My five out-of-scope questions ranged from 0.821 to 0.885. The relevance 
+cutoff of 0.6 lets every real question through and stops every off-topic one. The closest call is ECON 101 at 
+0.522, which is only 0.078 under the cutoff.
 
 ## How I Used AI
 
