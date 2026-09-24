@@ -124,10 +124,6 @@ of 0.6 sits in the gap between the two groups. It also warned that my ECON 101 q
 
 # Unit 2
 
-<!-- These sections get ADDED to what's already above. Don't delete or rewrite
-     unit 1 — the point is that someone can see what you said before you knew
-     how it went. -->
-
 ## Run Log — Before
 
 <!-- Your five criteria, three runs each. `python run_eval.py --label before`
@@ -142,15 +138,84 @@ of 0.6 sits in the gap between the two groups. It also warned that my ECON 101 q
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 1. Retrieved chunk contains the answer | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 2. Every answer names a source | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 4. Chunks start and end at sentence boundaries | 5/5 | 5/5 | 5/5 | MET |
+| 5. The named source is the right document | 5/5 | 5/5 | 5/5 | MET |
 
-<!-- Underneath, paste the REAL output for each criterion from one of your
-     runs — the actual text your system produced, not a description of it.
-     Name the file and function that produced it. -->
+
+Criterion 1 - Retrieved chunk contains the answer
+
+Produced by store.py::search, chunks from chunker.py::split_documents
+
+How much does laundry cost at Calder Annexe? - run 1
+
+Best distance: 0.2182 (passed the gate)
+Sources retrieved: housing_calder_annexe.txt, housing_calder_annexe_laundry.txt, housing_fenwick_court.txt, housing_innisfree_hall.txt, housing_morrow_house.txt
+
+At Calder Annexe, laundry costs $2.00 for a wash and $1.75 for a dryer. 
+
+This information comes from `housing_calder_annexe.txt` and `housing_calder_annexe_laundry.txt`.
+
+
+Criterion 2 - Every answer names a source
+
+Produced by generate.py, grounding instruction requires source filename.
+
+How often does the campus shuttle run on weekdays? - run 1
+
+Best distance: 0.1825 (passed the gate)
+Sources retrieved: course_cs_210.txt, course_econ_101_workload.txt, course_stat_150_workload.txt, housing_aldridge_hall.txt, transit_shuttle.txt
+
+The campus shuttle runs a loop every 20 minutes on weekdays, from 7am to 11pm. 
+
+Source: transit_shuttle.txt
+
+
+Criterion 3 - Gate stops out-of-corpus questions
+
+Produced by run_eval.py::check_out_of_scope, cutoff 0.6.
+
+| Out-of-scope question | Best distance | Gate |
+|---|---|---|
+| What is the capital of Mongolia? | 0.821 | refused |
+
+
+Criterion 4 - Chunks start and end at sentence boundaries
+
+How often does the campus shuttle run on weekdays? - run 1
+
+Best distance: 0.1825 (passed the gate)
+Sources retrieved: course_cs_210.txt, course_econ_101_workload.txt, course_stat_150_workload.txt, housing_aldridge_hall.txt, transit_shuttle.txt
+
+The campus shuttle runs a loop every 20 minutes on weekdays, from 7am to 11pm. 
+
+Source: transit_shuttle.txt
+
+The answer was grounded in transit_shuttle.txt#0:
+
+======================================================================
+Chunk 187  |  source: transit_shuttle.txt#0  |  produced by: chunker.py::split_documents
+======================================================================
+The campus shuttle
+
+Runs a loop every 20 minutes from 7am to 11pm on weekdays and every 40 minutes on weekends. The published timetable is optimistic by about five minutes in the morning and accurate the rest of the day.
+
+Starts at the beginning of the document, and ends in a period.
+
+
+Criterion 5 - The named source is the right document
+
+Is ECON 101 curved? - run 1
+
+Best distance: 0.5221 (passed the gate)
+Sources retrieved: course_econ_101.txt, course_econ_101_exams.txt, course_econ_101_workload.txt, course_phys_130_exams.txt
+
+Yes, ECON 101 is curved, and generously (course_econ_101.txt and course_econ_101_exams.txt).
+
+course_econ_101.txt is the actual ECON 101 course page, the correct document for the question.
+
 
 ## Verdicts
 
