@@ -229,23 +229,9 @@ course_econ_101.txt is the actual ECON 101 course page, the correct document for
 
 ## Diagnoses
 
-<!-- For each miss: which stage caused it, and how. The stage alone isn't
-     enough — you need the mechanism.
-
-     Not a diagnosis: "Question 3 didn't work."
-     A diagnosis:     "Question 3 asks about laundry costs. The answer is in
-                       one sentence that got split across two chunks, so
-                       neither chunk on its own contains it."
-
-     The five stages: loading → chunking → embedding → retrieval → generation.
-
-     Look for a pattern. If three misses all ask about numbers, that's one
-     problem, not three.
-
-     Missed nothing? Say so, then say honestly whether your targets were set
-     low, and which one you'd tighten and to what.
-
-     Milestone 3. -->
+All five criteria came back MET. My five test questions are all simple, single-document lookups with no ambiguity. That's likely
+why every criterion held so comfortably, especially criterion 1, which never faced a case where two
+documents compete for the same answer or where the answer is split across chunks. If I tighten anything, I would add a harder question like that and see if criterion 1's 4/5 target actually gets stress tested instead of holding easily.
 
 ## The Improvement
 
