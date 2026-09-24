@@ -264,17 +264,12 @@ Chunking (criterion 4) is unaffected, since this change only touched retrieval.
 
 ## What's Still Broken
 
-<!-- For each criterion still missed after your fix: what you'd do about it,
-     and why you stopped where you did.
-
-     "I ran out of time" is fine if it's true. Pretending nothing is left is
-     not.
-
-     Milestone 5. -->
+Nothing failed. But my test questions never created a hard case for retrieval, so a
+clean pass doesn't mean there's nothing left to find.
 
 ## What I'd Do Differently
 
-<!-- Knowing what you know now — which of your five criteria would you write
-     differently, and why?
-
-     Milestone 5. -->
+Criterion 1 says the retrieved chunks should contain the answer, but my scorer only checks
+the final answer text, not the chunks themselves. If the model ever produced a correct-looking
+answer without that fact actually being in a retrieved chunk, my scorer would still mark it a
+pass. I have no evidence this happened, but the criterion isn't quite testing what it says it tests.
