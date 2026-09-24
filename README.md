@@ -219,22 +219,13 @@ course_econ_101.txt is the actual ECON 101 course page, the correct document for
 
 ## Verdicts
 
-<!-- MET or MISSED for each of the five, against the target you wrote last
-     unit — not a new one. Plus a sentence on how you decided. That sentence
-     matters most where it was close.
-
-     If your target said 4 of 5 and your runs came out 4, 3, 4, that's a MISS.
-     The target has to hold, not show up occasionally.
-
-     Milestone 2. -->
-
 | # | Criterion | Verdict | How I decided |
 |---|---|---|---|
-| 1 |  |  |  |
-| 2 |  |  |  |
-| 3 |  |  |  |
-| 4 |  |  |  |
-| 5 |  |  |  |
+| 1 | Retrieved chunk contains the answer | MET | All 5 questions passed in all 3 runs (5/5), against a 4/5 target. The margin is wide, only 1 question was expected to possibly fail, and none did. |
+| 2 | Every answer names a source | MET | Every answer across all 3 runs named at least one source file, matching the 5/5 target exactly with no room for a miss. |
+| 3 | Gate stops out-of-corpus questions | MET | The gate refused all 5 out-of-corpus questions in the single deterministic pass, against a 4/5 target. |
+| 4 | Chunks start and end at sentence boundaries | MET | Checked chunks across multiple files with `python app.py chunks -n 20`. Every sampled chunk started at a document boundary or after a period, and ended in punctuation, well above the 4/5 target. |
+| 5 | The named source is the right document | MET | For all 5 questions, the source named in the answer matched the actual topic asked about (e.g. transit_shuttle.txt for the shuttle question, course_econ_101.txt for the ECON question). |
 
 ## Diagnoses
 
