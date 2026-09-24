@@ -237,32 +237,30 @@ documents compete for the same answer or where the answer is split across chunks
 
 **What I changed:**
 
+Added keyword search (BM25) alongside the existing embedding search in store.py::search. 
+Now both scores combine to rank chunks, instead of using embedding distance alone.
+
 **Why I picked it:**
 
-<!-- Connect it to a specific diagnosis above in one sentence. If you can't,
-     you picked a fix because it sounded impressive. -->
+I wanted to see if adding keyword matching would change which chunks got retrieved, even on
+questions that were already easy for embedding search.
 
 ### Run Log — After
 
-<!-- Same format, same five criteria, three runs each.
-     `python run_eval.py --label after` -->
-
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 1. Retrieved chunk contains the answer | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 2. Every answer names a source | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 4. Chunks start and end at sentence boundaries | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 5. The named source is the right document | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
 
 **Did it help?**
 
-<!-- Say plainly whether it did, and how you know. If it made things worse,
-     say that — a change that backfired, honestly reported, earns full credit
-     and is more interesting than one that worked. What matters is that you can
-     tell.
-
-     Milestone 4. -->
+There was no measurable change. All five criteria stayed MET, with the same pass rates and distances as
+before. The gate still refused 5 of 5. For the shuttle question, the retrieved sources actually changed 
+(3 of 5 slots swapped), but the correct source stayed in the results, so the answer didn't change. 
+Chunking (criterion 4) is unaffected, since this change only touched retrieval.
 
 ## What's Still Broken
 

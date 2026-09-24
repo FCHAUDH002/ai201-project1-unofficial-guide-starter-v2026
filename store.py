@@ -32,6 +32,34 @@ import chromadb  # noqa: E402
 import config
 from chunker import Chunk
 
+from rank_bm25 import BM25Okapi
+
+_bm25_cache: dict[str, tuple[BM25Okapi, list[dict]]] = {}
+
+def _bm25_index(corpus: str | None, variant: str):
+    """
+    Build (and cache) a BM25 index over every chunk in this collection.
+
+    BM25 needs the raw chunk texts, not embeddings, so this reads them
+    straight out of the same Chroma collection search() already uses.
+    """
+    name = config.collection_name(corpus, variant)
+    if name in _bm25_cache:
+        return _bm25_cache[name]
+
+    collection = _client().get_collection(name)
+    all_data = collection.get(include=["documents", "metadatas"])
+
+    tokenized = [doc.lower().split() for doc in all_data["documents"]]
+    bm25 = BM25Okapi(tokenized)
+
+    records = [
+        {"text": doc, "meta": meta}
+        for doc, meta in zip(all_data["documents"], all_data["metadatas"])
+    ]
+
+    _bm25_cache[name] = (bm25, records)
+    return bm25, records
 
 @dataclass
 class Result:
@@ -185,9 +213,13 @@ def search(
     variant: str = "default",
 ) -> list[Result]:
     """
-    Retrieve the chunks closest in meaning to a question.
+    Retrieve the chunks closest in meaning to a question, using a blend of
+    semantic (embedding) search and keyword (BM25) search.
 
-    Returns them nearest-first, each with its distance.
+    Returns them nearest-first, each with its distance. The distance is still
+    the embedding distance, so the 0.6 relevance cutoff still means the same
+    thing it always did, hybrid scoring only affects which chunks show up
+    and in what order, not what "distance" means.
     """
     top_k = top_k or config.TOP_K
     name = config.collection_name(corpus, variant)
@@ -199,25 +231,43 @@ def search(
             f"No index called '{name}'. Run `python app.py index` first."
         ) from exc
 
+    candidate_k = min(top_k * 3, collection.count())
+
     raw = collection.query(
         query_embeddings=embed([question]),
-        n_results=min(top_k, collection.count()),
+        n_results=candidate_k,
     )
 
-    results: list[Result] = []
+    bm25, records = _bm25_index(corpus, variant)
+    tokenized_query = question.lower().split()
+    bm25_scores = bm25.get_scores(tokenized_query)
+    text_to_bm25 = {r["text"]: score for r, score in zip(records, bm25_scores)}
+
+    max_bm25 = max(bm25_scores) if len(bm25_scores) and max(bm25_scores) > 0 else 1.0
+
+    scored = []
     for text, meta, distance in zip(
         raw["documents"][0], raw["metadatas"][0], raw["distances"][0]
     ):
-        results.append(
-            Result(
-                text=text,
-                source=str(meta.get("source", "unknown")),
-                label=f"{meta.get('source', 'unknown')}#{meta.get('index', 0)}",
-                distance=float(distance),
-                produced_by=str(meta.get("produced_by", "unknown")),
+        semantic_score = 1 - float(distance)
+        keyword_score = text_to_bm25.get(text, 0.0) / max_bm25
+        combined = 0.5 * semantic_score + 0.5 * keyword_score
+
+        scored.append(
+            (
+                combined,
+                Result(
+                    text=text,
+                    source=str(meta.get("source", "unknown")),
+                    label=f"{meta.get('source', 'unknown')}#{meta.get('index', 0)}",
+                    distance=float(distance),
+                    produced_by=str(meta.get("produced_by", "unknown")),
+                ),
             )
         )
-    return results
+
+    scored.sort(key=lambda pair: pair[0], reverse=True)
+    return [result for _, result in scored[:top_k]]
 
 
 def index_exists(corpus: str | None = None, variant: str = "default") -> bool:
